@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Environment Monitor AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <button id="theme-toggle" onclick="toggleTheme()">
+    🌙 Dark
+</button>
+
+<div class="hero">
+
+    <div class="logo">
+        🤖
+    </div>
+
+    <h1>Environment Monitor AI</h1>
+
+    <p class="subtitle">
+        Environment Status & Insights
+    </p>
+
+</div>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        <h2>Environment Monitor AI</h2>
+        <span>Enterprise Dashboard</span>
+    </div>
+
+    <div id="chat-box">
+
+        <div class="welcome">
+            <h3>Welcome to Environment Monitor</h3>
+            <p>
+                Ask about environment status,
+                deployment history,
+                platform version,
+                database refresh information.
+            </p>
+           
+        </div>
+
+</div>
+    </div>
+
+    <div class="input-area">
+
+       <input
+    type="text"
+    id="message"
+    placeholder="Ask about an environment..."
+    onkeypress="handleEnter(event)"
+>
+
+        <button onclick="sendMessage()">
+            ➤
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+    function handleEnter(event){
+
+    if(event.key === "Enter"){
+        sendMessage();
+    }
+
+}
+   
+async function sendMessage() {
+
+    let message =
+        document.getElementById("message").value;
+
+    if(message.trim() === "")
+        return;
+
+    let chat =
+        document.getElementById("chat-box");
+chat.innerHTML += `
+<div class="user-message">
+    <div class="sender">You</div>
+    <div class="user">${message}</div>
+</div>
+`;
+
+
+    let response = await fetch("/chat", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            message: message
+        })
+    });
+    
+    let data = await response.json();
+
+    chat.innerHTML += `
+<div class="bot-message">
+    <div class="sender">Environment Monitor AI</div>
+    <div class="bot">${data.reply}</div>
+</div>
+`;
+
+    document.getElementById("message").value = "";
+
+    chat.scrollTop = chat.scrollHeight;
+}
+
+</script>
+<script>
+
+function toggleTheme() {
+
+    document.body.classList.toggle("light-mode");
+
+    let btn = document.getElementById("theme-toggle");
+
+    if(document.body.classList.contains("light-mode")){
+        btn.innerHTML = "☀️ Light";
+    } else {
+        btn.innerHTML = "🌙 Dark";
+    }
+}
+</script>
+
+</body>
+</html>
